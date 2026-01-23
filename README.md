@@ -1,154 +1,73 @@
-# SupportDesk
+# Welcome to your Lovable project
 
-# 📌 Customer Support Ticket Classification and Routing
-CP5 – Mid-Build Progress Check
-# 📖 Project Overview
+## Project info
 
-Large organizations receive a high volume of customer support tickets daily. Manually categorizing and routing these tickets is time-consuming and error-prone.
+**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 
-This project implements an AI-based ticket classification system that automatically:
+## How can I edit this code?
 
-Cleans incoming ticket text
+There are several ways of editing your application.
 
-Classifies tickets into predefined issue categories
+**Use Lovable**
 
-Helps route tickets to the appropriate support team
+Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
 
-This submission represents the CP5 Mid-Build stage, focusing on building a working ML pipeline.
+Changes made via Lovable will be committed automatically to this repo.
 
-# 🎯 Objectives
+**Use your preferred IDE**
 
-Preprocess and clean raw ticket data
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-Build a baseline machine learning model
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Improve the model using better preprocessing and vectorization
+Follow these steps:
 
-Evaluate model performance using metrics
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-Maintain clean and readable code structure
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-# 🗂 Dataset Description
+# Step 3: Install the necessary dependencies.
+npm i
 
-The dataset consists of customer support tickets.
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
+```
 
-Each record contains:
+**Edit a file directly in GitHub**
 
-Ticket text (user complaint or query)
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-Corresponding category/label
+**Use GitHub Codespaces**
 
-Dataset is loaded locally and split into training and testing sets.
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-# 🧹 Data Cleaning & Preprocessing
+## What technologies are used for this project?
 
-The following preprocessing steps were implemented:
+This project is built with:
 
-Converted text to lowercase
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-Removed punctuation and special characters
+## How can I deploy this project?
 
-Removed extra whitespace
+Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
 
-Handled missing values
+## Can I connect a custom domain to my Lovable project?
 
-Tokenized text
+Yes, you can!
 
-Converted text to numerical features using TF-IDF Vectorization
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-These steps ensure the model receives clean and meaningful input data.
-
-# 🤖 Model Training
-
-Two models were trained for comparison:
-
-🔹 Baseline Model
-
-Simple machine learning classifier
-
-Minimal preprocessing
-
-Used to establish a performance benchmark
-
-🔹 Improved Model
-
-Enhanced text preprocessing
-
-TF-IDF feature extraction
-
-Trained using a supervised classification algorithm
-
-Better performance compared to the baseline
-
-# 📊 Evaluation & Metric Tracking
-
-Model performance was evaluated using Accuracy
-
-Accuracy was chosen for its simplicity and suitability for mid-build evaluation
-
-Final Accuracy Achieved:
-
-~64%
-
-
-Metric tracking was implemented by evaluating the trained model on unseen test data and printing evaluation results.
-
-# 📈 Baseline vs Improved Model
-Model Type	Description	Performance
-Baseline Model	Minimal preprocessing	Lower accuracy
-Improved Model	Cleaned data + TF-IDF	Higher accuracy
-
-This comparison shows that preprocessing and feature engineering significantly improve model performance.
-
-# 🧱 Code Structure & Clarity
-
-The project code follows a clear and logical pipeline:
-
-Dataset loading
-
-Data cleaning and preprocessing
-
-Feature extraction
-
-Model training
-
-Model evaluation
-
-Variables are clearly named
-
-Code is modular and readable
-
-Sections are logically separated
-
-This structure makes the project easy to understand and extend.
-
-# ⚠ Limitations
-
-Only accuracy metric is used (advanced metrics like F1-score can be added later)
-
-Dataset size is limited
-
-No real-time deployment in this stage
-
-# 🚀 Future Enhancements
-
-Add precision, recall, and F1-score
-
-Implement deep learning models (LSTM / BERT)
-
-Integrate real-time ticket routing
-
-Deploy using a web interface or API
-
-# ✅ CP5 Completion Summary
-
-✔ Data cleaning implemented
-✔ Model training working
-✔ Baseline vs improved comparison done
-✔ Metric tracking implemented
-✔ Code structure clear and readable
-
-# 👤 Author
-
-Project by: Kundeti Monasri, Oruganti Sania Mary, Malkedi Nandidni, Varshita Pallapothu
-Domain: Machine Learning / NLP
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
