@@ -43,6 +43,38 @@ export const categoryToTeam: Record<TicketCategory, TeamType> = {
   'General Query': 'General Support Team',
 };
 
+// Keyword-based category detection from customer description
+export function detectCategory(text: string): TicketCategory {
+  const lowerText = text.toLowerCase();
+  
+  // Billing / Payment keywords
+  const billingKeywords = ['billing', 'invoice', 'payment', 'charge', 'charged', 'credit card', 'debit', 'subscription', 'price', 'cost', 'fee', 'bill', 'transaction', 'paid', 'pay'];
+  if (billingKeywords.some(keyword => lowerText.includes(keyword))) {
+    return 'Billing / Payment';
+  }
+  
+  // Login / Account keywords
+  const accountKeywords = ['login', 'log in', 'password', 'reset', 'account', 'sign in', 'signin', 'authentication', 'locked', 'access', 'two-factor', '2fa', 'email', 'profile', 'username', 'credentials'];
+  if (accountKeywords.some(keyword => lowerText.includes(keyword))) {
+    return 'Login / Account';
+  }
+  
+  // Technical Issue keywords
+  const technicalKeywords = ['error', 'bug', 'crash', 'not working', 'broken', 'slow', 'performance', 'loading', 'sync', 'integration', 'api', 'feature', 'app', 'application', 'software', 'system', 'technical', 'glitch', 'issue'];
+  if (technicalKeywords.some(keyword => lowerText.includes(keyword))) {
+    return 'Technical Issue';
+  }
+  
+  // Refund keywords
+  const refundKeywords = ['refund', 'money back', 'return', 'cancel', 'cancellation', 'reimburse', 'compensation', 'double charged', 'overcharged'];
+  if (refundKeywords.some(keyword => lowerText.includes(keyword))) {
+    return 'Refund';
+  }
+  
+  // Default to General Query
+  return 'General Query';
+}
+
 const customerNames = [
   'Sarah Johnson', 'Michael Chen', 'Emily Rodriguez', 'David Kim', 
   'Jessica Thompson', 'James Wilson', 'Amanda Foster', 'Robert Martinez',

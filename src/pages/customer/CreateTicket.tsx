@@ -2,28 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTickets } from '@/contexts/TicketContext';
-import { TicketCategory, TicketUrgency } from '@/lib/mockData';
+import { TicketCategory, TicketUrgency, detectCategory } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ArrowLeft, Upload, CheckCircle, Ticket } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ArrowLeft, Upload, CheckCircle, Ticket, AlertTriangle, AlertCircle, Info } from 'lucide-react';
 import { format } from 'date-fns';
-
-const categories: TicketCategory[] = [
-  'Billing / Payment',
-  'Login / Account',
-  'Technical Issue',
-  'Refund',
-  'General Query'
-];
 
 export default function CreateTicket() {
   const navigate = useNavigate();
@@ -31,30 +17,21 @@ export default function CreateTicket() {
   const { addTicket } = useTickets();
 
   const [formData, setFormData] = useState({
-    category: '' as TicketCategory | '',
     subject: '',
     description: '',
+    urgency: 'Medium' as TicketUrgency,
   });
   const [submitted, setSubmitted] = useState(false);
-  const [createdTicket, setCreatedTicket] = useState<{ id: string; createdAt: Date } | null>(null);
+  const [createdTicket, setCreatedTicket] = useState<{ id: string; createdAt: Date; category: TicketCategory } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user || !formData.category || !formData.subject || !formData.description) return;
+    if (!user || !formData.subject || !formData.description) return;
 
-    // Auto-detect urgency based on keywords
-    let urgency: TicketUrgency = 'Medium';
-    const lowerDesc = formData.description.toLowerCase();
-    const lowerSubject = formData.subject.toLowerCase();
-    
-    if (lowerDesc.includes('urgent') || lowerDesc.includes('critical') || 
-        lowerDesc.includes('emergency') || lowerSubject.includes('urgent')) {
-      urgency = 'High';
-    } else if (lowerDesc.includes('when you can') || lowerDesc.includes('no rush') || 
-               lowerDesc.includes('minor')) {
-      urgency = 'Low';
-    }
+    // Auto-detect category from description and subject
+    const combinedText = `${formData.subject} ${formData.description}`;
+    const detectedCategory = detectCategory(combinedText);
 
     const ticket = addTicket({
       customerId: user.id,
@@ -62,13 +39,21 @@ export default function CreateTicket() {
       customerEmail: user.email,
       subject: formData.subject,
       description: formData.description,
-      category: formData.category as TicketCategory,
+      category: detectedCategory,
       status: 'New',
-      urgency,
+      urgency: formData.urgency,
     });
 
-    setCreatedTicket({ id: ticket.id, createdAt: ticket.createdAt });
+    setCreatedTicket({ id: ticket.id, createdAt: ticket.createdAt, category: detectedCategory });
     setSubmitted(true);
+  };
+
+  const getUrgencyIcon = (urgency: TicketUrgency) => {
+    switch (urgency) {
+      case 'High': return <AlertTriangle className="w-4 h-4" />;
+      case 'Medium': return <AlertCircle className="w-4 h-4" />;
+      case 'Low': return <Info className="w-4 h-4" />;
+    }
   };
 
   if (submitted && createdTicket) {
@@ -98,10 +83,21 @@ export default function CreateTicket() {
                 <p className="font-semibold">{format(createdTicket.createdAt, 'MMM d, yyyy h:mm a')}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Category</p>
-                <p className="font-semibold">{formData.category}</p>
+                <p className="text-sm text-muted-foreground">Detected Category</p>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent">
+                    Auto-detected
+                  </span>
+                  <p className="font-semibold">{createdTicket.category}</p>
+                </div>
               </div>
             </div>
+          </div>
+
+          <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 mb-6 text-left">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">Note:</span> Our system has automatically classified your issue as "{createdTicket.category}" based on your description. It has been routed to the appropriate team for faster resolution.
+            </p>
           </div>
 
           <div className="flex gap-4 justify-center">
@@ -131,29 +127,12 @@ export default function CreateTicket() {
         </button>
         <h1 className="text-3xl font-bold">Create New Ticket</h1>
         <p className="text-muted-foreground mt-1">
-          Fill out the form below to submit a support request
+          Describe your issue and we'll route it to the right team automatically
         </p>
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="card-elevated p-8 space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="category">Issue Category</Label>
-          <Select
-            value={formData.category}
-            onValueChange={(value) => setFormData({ ...formData, category: value as TicketCategory })}
-          >
-            <SelectTrigger className="input-styled">
-              <SelectValue placeholder="Select a category..." />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="space-y-2">
           <Label htmlFor="subject">Subject *</Label>
           <Input
@@ -172,10 +151,68 @@ export default function CreateTicket() {
             id="description"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            placeholder="Please describe your issue in detail..."
+            placeholder="Please describe your issue in detail. Include any relevant information such as error messages, steps to reproduce, or what you were trying to accomplish..."
             className="input-styled min-h-[200px] resize-none"
             required
           />
+          <p className="text-xs text-muted-foreground">
+            Our system will automatically detect the issue type based on your description.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <Label>Urgency Level *</Label>
+          <RadioGroup
+            value={formData.urgency}
+            onValueChange={(value) => setFormData({ ...formData, urgency: value as TicketUrgency })}
+            className="grid grid-cols-3 gap-4"
+          >
+            <div className="relative">
+              <RadioGroupItem
+                value="High"
+                id="urgency-high"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="urgency-high"
+                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-destructive/50 peer-data-[state=checked]:border-destructive peer-data-[state=checked]:bg-destructive/5 cursor-pointer transition-all"
+              >
+                <AlertTriangle className="w-6 h-6 text-destructive" />
+                <span className="font-medium">High</span>
+                <span className="text-xs text-muted-foreground text-center">Critical issue</span>
+              </Label>
+            </div>
+            <div className="relative">
+              <RadioGroupItem
+                value="Medium"
+                id="urgency-medium"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="urgency-medium"
+                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-warning/50 peer-data-[state=checked]:border-warning peer-data-[state=checked]:bg-warning/5 cursor-pointer transition-all"
+              >
+                <AlertCircle className="w-6 h-6 text-warning" />
+                <span className="font-medium">Medium</span>
+                <span className="text-xs text-muted-foreground text-center">Standard priority</span>
+              </Label>
+            </div>
+            <div className="relative">
+              <RadioGroupItem
+                value="Low"
+                id="urgency-low"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="urgency-low"
+                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-success/50 peer-data-[state=checked]:border-success peer-data-[state=checked]:bg-success/5 cursor-pointer transition-all"
+              >
+                <Info className="w-6 h-6 text-success" />
+                <span className="font-medium">Low</span>
+                <span className="text-xs text-muted-foreground text-center">When possible</span>
+              </Label>
+            </div>
+          </RadioGroup>
         </div>
 
         <div className="space-y-2">
