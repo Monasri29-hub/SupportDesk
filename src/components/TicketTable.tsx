@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Ticket } from '@/lib/mockData';
 import { StatusBadge, UrgencyBadge } from '@/components/ui/status-badge';
 import { format } from 'date-fns';
+import { Sparkles } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -10,14 +11,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface TicketTableProps {
   tickets: Ticket[];
   showCustomer?: boolean;
   basePath?: string;
+  showAutoDetected?: boolean;
 }
 
-export function TicketTable({ tickets, showCustomer = false, basePath = '' }: TicketTableProps) {
+export function TicketTable({ tickets, showCustomer = false, basePath = '', showAutoDetected = true }: TicketTableProps) {
   const navigate = useNavigate();
 
   const handleRowClick = (ticketId: string) => {
@@ -32,7 +39,19 @@ export function TicketTable({ tickets, showCustomer = false, basePath = '' }: Ti
             <TableHead className="font-semibold">Ticket ID</TableHead>
             {showCustomer && <TableHead className="font-semibold">Customer</TableHead>}
             <TableHead className="font-semibold">Subject</TableHead>
-            <TableHead className="font-semibold">Category</TableHead>
+            <TableHead className="font-semibold">
+              <div className="flex items-center gap-1.5">
+                {showAutoDetected && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Sparkles className="w-3.5 h-3.5 text-accent" />
+                    </TooltipTrigger>
+                    <TooltipContent>Auto-detected by system</TooltipContent>
+                  </Tooltip>
+                )}
+                Issue Type
+              </div>
+            </TableHead>
             <TableHead className="font-semibold">Status</TableHead>
             <TableHead className="font-semibold">Urgency</TableHead>
             <TableHead className="font-semibold">Last Updated</TableHead>
@@ -64,7 +83,11 @@ export function TicketTable({ tickets, showCustomer = false, basePath = '' }: Ti
                   </TableCell>
                 )}
                 <TableCell className="max-w-xs truncate">{ticket.subject}</TableCell>
-                <TableCell className="text-sm">{ticket.category}</TableCell>
+                <TableCell>
+                  <span className="text-sm inline-flex items-center gap-1.5">
+                    {ticket.category}
+                  </span>
+                </TableCell>
                 <TableCell><StatusBadge status={ticket.status} /></TableCell>
                 <TableCell><UrgencyBadge urgency={ticket.urgency} /></TableCell>
                 <TableCell className="text-muted-foreground text-sm">
