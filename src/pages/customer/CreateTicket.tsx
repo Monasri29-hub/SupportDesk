@@ -90,6 +90,18 @@ export default function CreateTicket() {
                   <p className="font-semibold">{createdTicket.category}</p>
                 </div>
               </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Detected Urgency</p>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent">
+                    Auto-detected
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {getUrgencyIcon(createdTicket.urgency)}
+                    <p className="font-semibold">{createdTicket.urgency}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
