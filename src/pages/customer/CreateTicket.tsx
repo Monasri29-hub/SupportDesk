@@ -18,7 +18,6 @@ export default function CreateTicket() {
   const [formData, setFormData] = useState({
     subject: '',
     description: '',
-    urgency: 'Medium' as TicketUrgency,
   });
   const [submitted, setSubmitted] = useState(false);
   const [createdTicket, setCreatedTicket] = useState<{ id: string; createdAt: Date; category: TicketCategory } | null>(null);
