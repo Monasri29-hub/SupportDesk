@@ -20,7 +20,7 @@ export default function CreateTicket() {
     description: '',
   });
   const [submitted, setSubmitted] = useState(false);
-  const [createdTicket, setCreatedTicket] = useState<{ id: string; createdAt: Date; category: TicketCategory } | null>(null);
+  const [createdTicket, setCreatedTicket] = useState<{ id: string; createdAt: Date; category: TicketCategory; urgency: TicketUrgency } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
