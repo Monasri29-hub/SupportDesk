@@ -167,7 +167,7 @@ export default function CreateTicket() {
             required
           />
           <p className="text-xs text-muted-foreground">
-            Our system will automatically detect the issue type based on your description.
+            Our system will automatically detect the issue type and urgency level based on your description.
           </p>
         </div>
 
