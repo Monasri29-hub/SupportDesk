@@ -27,9 +27,10 @@ export default function CreateTicket() {
     
     if (!user || !formData.subject || !formData.description) return;
 
-    // Auto-detect category from description and subject
+    // Auto-detect category and urgency from description and subject
     const combinedText = `${formData.subject} ${formData.description}`;
     const detectedCategory = detectCategory(combinedText);
+    const detectedUrgency = detectUrgency(combinedText);
 
     const ticket = addTicket({
       customerId: user.id,
@@ -39,10 +40,10 @@ export default function CreateTicket() {
       description: formData.description,
       category: detectedCategory,
       status: 'New',
-      urgency: formData.urgency,
+      urgency: detectedUrgency,
     });
 
-    setCreatedTicket({ id: ticket.id, createdAt: ticket.createdAt, category: detectedCategory });
+    setCreatedTicket({ id: ticket.id, createdAt: ticket.createdAt, category: detectedCategory, urgency: detectedUrgency });
     setSubmitted(true);
   };
 
