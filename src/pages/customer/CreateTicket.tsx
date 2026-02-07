@@ -107,7 +107,7 @@ export default function CreateTicket() {
 
           <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 mb-6 text-left">
             <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">Note:</span> Our system has automatically classified your issue as "{createdTicket.category}" based on your description. It has been routed to the appropriate team for faster resolution.
+              <span className="font-medium text-foreground">Note:</span> Our system has automatically classified your issue as "{createdTicket.category}" with "{createdTicket.urgency}" urgency based on your description. It has been routed to the appropriate team for faster resolution.
             </p>
           </div>
 
