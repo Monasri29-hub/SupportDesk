@@ -72,18 +72,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        status: {
-          new: "hsl(var(--status-new))",
-          open: "hsl(var(--status-open))",
-          pending: "hsl(var(--status-pending))",
-          resolved: "hsl(var(--status-resolved))",
-          closed: "hsl(var(--status-closed))",
-        },
-        urgency: {
-          high: "hsl(var(--urgency-high))",
-          medium: "hsl(var(--urgency-medium))",
-          low: "hsl(var(--urgency-low))",
-        },
+        
       },
       borderRadius: {
         lg: "var(--radius)",
