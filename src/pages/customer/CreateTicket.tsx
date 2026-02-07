@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTickets } from '@/contexts/TicketContext';
-import { TicketCategory, TicketUrgency, detectCategory } from '@/lib/mockData';
+import { TicketCategory, TicketUrgency, detectCategory, detectUrgency } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
