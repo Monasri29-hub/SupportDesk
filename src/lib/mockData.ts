@@ -75,6 +75,26 @@ export function detectCategory(text: string): TicketCategory {
   return 'General Query';
 }
 
+// Keyword-based urgency detection from customer description
+export function detectUrgency(text: string): TicketUrgency {
+  const lowerText = text.toLowerCase();
+
+  // High urgency keywords
+  const highKeywords = ['urgent', 'critical', 'emergency', 'immediately', 'asap', 'down', 'outage', 'cannot access', 'blocked', 'lost data', 'security breach', 'hacked', 'compromised', 'deadline', 'production', 'severe', 'major', 'disaster', 'cannot work', 'stuck', 'broken completely'];
+  if (highKeywords.some(keyword => lowerText.includes(keyword))) {
+    return 'High';
+  }
+
+  // Low urgency keywords
+  const lowKeywords = ['question', 'curious', 'wondering', 'when possible', 'no rush', 'minor', 'small', 'cosmetic', 'suggestion', 'feedback', 'feature request', 'nice to have', 'sometime', 'eventually', 'low priority', 'not urgent', 'general', 'info', 'information', 'how to', 'how do i'];
+  if (lowKeywords.some(keyword => lowerText.includes(keyword))) {
+    return 'Low';
+  }
+
+  // Default to Medium
+  return 'Medium';
+}
+
 const customerNames = [
   'Sarah Johnson', 'Michael Chen', 'Emily Rodriguez', 'David Kim', 
   'Jessica Thompson', 'James Wilson', 'Amanda Foster', 'Robert Martinez',

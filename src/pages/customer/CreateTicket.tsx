@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTickets } from '@/contexts/TicketContext';
-import { TicketCategory, TicketUrgency, detectCategory } from '@/lib/mockData';
+import { TicketCategory, TicketUrgency, detectCategory, detectUrgency } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ArrowLeft, Upload, CheckCircle, Ticket, AlertTriangle, AlertCircle, Info } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -19,19 +18,19 @@ export default function CreateTicket() {
   const [formData, setFormData] = useState({
     subject: '',
     description: '',
-    urgency: 'Medium' as TicketUrgency,
   });
   const [submitted, setSubmitted] = useState(false);
-  const [createdTicket, setCreatedTicket] = useState<{ id: string; createdAt: Date; category: TicketCategory } | null>(null);
+  const [createdTicket, setCreatedTicket] = useState<{ id: string; createdAt: Date; category: TicketCategory; urgency: TicketUrgency } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!user || !formData.subject || !formData.description) return;
 
-    // Auto-detect category from description and subject
+    // Auto-detect category and urgency from description and subject
     const combinedText = `${formData.subject} ${formData.description}`;
     const detectedCategory = detectCategory(combinedText);
+    const detectedUrgency = detectUrgency(combinedText);
 
     const ticket = addTicket({
       customerId: user.id,
@@ -41,10 +40,10 @@ export default function CreateTicket() {
       description: formData.description,
       category: detectedCategory,
       status: 'New',
-      urgency: formData.urgency,
+      urgency: detectedUrgency,
     });
 
-    setCreatedTicket({ id: ticket.id, createdAt: ticket.createdAt, category: detectedCategory });
+    setCreatedTicket({ id: ticket.id, createdAt: ticket.createdAt, category: detectedCategory, urgency: detectedUrgency });
     setSubmitted(true);
   };
 
@@ -91,12 +90,24 @@ export default function CreateTicket() {
                   <p className="font-semibold">{createdTicket.category}</p>
                 </div>
               </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Detected Urgency</p>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent">
+                    Auto-detected
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {getUrgencyIcon(createdTicket.urgency)}
+                    <p className="font-semibold">{createdTicket.urgency}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 mb-6 text-left">
             <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">Note:</span> Our system has automatically classified your issue as "{createdTicket.category}" based on your description. It has been routed to the appropriate team for faster resolution.
+              <span className="font-medium text-foreground">Note:</span> Our system has automatically classified your issue as "{createdTicket.category}" with "{createdTicket.urgency}" urgency based on your description. It has been routed to the appropriate team for faster resolution.
             </p>
           </div>
 
@@ -156,64 +167,10 @@ export default function CreateTicket() {
             required
           />
           <p className="text-xs text-muted-foreground">
-            Our system will automatically detect the issue type based on your description.
+            Our system will automatically detect the issue type and urgency level based on your description.
           </p>
         </div>
 
-        <div className="space-y-3">
-          <Label>Urgency Level *</Label>
-          <RadioGroup
-            value={formData.urgency}
-            onValueChange={(value) => setFormData({ ...formData, urgency: value as TicketUrgency })}
-            className="grid grid-cols-3 gap-4"
-          >
-            <div className="relative">
-              <RadioGroupItem
-                value="High"
-                id="urgency-high"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="urgency-high"
-                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-destructive/50 peer-data-[state=checked]:border-destructive peer-data-[state=checked]:bg-destructive/5 cursor-pointer transition-all"
-              >
-                <AlertTriangle className="w-6 h-6 text-destructive" />
-                <span className="font-medium">High</span>
-                <span className="text-xs text-muted-foreground text-center">Critical issue</span>
-              </Label>
-            </div>
-            <div className="relative">
-              <RadioGroupItem
-                value="Medium"
-                id="urgency-medium"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="urgency-medium"
-                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-warning/50 peer-data-[state=checked]:border-warning peer-data-[state=checked]:bg-warning/5 cursor-pointer transition-all"
-              >
-                <AlertCircle className="w-6 h-6 text-warning" />
-                <span className="font-medium">Medium</span>
-                <span className="text-xs text-muted-foreground text-center">Standard priority</span>
-              </Label>
-            </div>
-            <div className="relative">
-              <RadioGroupItem
-                value="Low"
-                id="urgency-low"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="urgency-low"
-                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-success/50 peer-data-[state=checked]:border-success peer-data-[state=checked]:bg-success/5 cursor-pointer transition-all"
-              >
-                <Info className="w-6 h-6 text-success" />
-                <span className="font-medium">Low</span>
-                <span className="text-xs text-muted-foreground text-center">When possible</span>
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
 
         <div className="space-y-2">
           <Label>Attachments (Optional)</Label>
