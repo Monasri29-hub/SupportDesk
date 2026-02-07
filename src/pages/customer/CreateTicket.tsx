@@ -159,60 +159,6 @@ export default function CreateTicket() {
           </p>
         </div>
 
-        <div className="space-y-3">
-          <Label>Urgency Level *</Label>
-          <RadioGroup
-            value={formData.urgency}
-            onValueChange={(value) => setFormData({ ...formData, urgency: value as TicketUrgency })}
-            className="grid grid-cols-3 gap-4"
-          >
-            <div className="relative">
-              <RadioGroupItem
-                value="High"
-                id="urgency-high"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="urgency-high"
-                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-destructive/50 peer-data-[state=checked]:border-destructive peer-data-[state=checked]:bg-destructive/5 cursor-pointer transition-all"
-              >
-                <AlertTriangle className="w-6 h-6 text-destructive" />
-                <span className="font-medium">High</span>
-                <span className="text-xs text-muted-foreground text-center">Critical issue</span>
-              </Label>
-            </div>
-            <div className="relative">
-              <RadioGroupItem
-                value="Medium"
-                id="urgency-medium"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="urgency-medium"
-                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-warning/50 peer-data-[state=checked]:border-warning peer-data-[state=checked]:bg-warning/5 cursor-pointer transition-all"
-              >
-                <AlertCircle className="w-6 h-6 text-warning" />
-                <span className="font-medium">Medium</span>
-                <span className="text-xs text-muted-foreground text-center">Standard priority</span>
-              </Label>
-            </div>
-            <div className="relative">
-              <RadioGroupItem
-                value="Low"
-                id="urgency-low"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="urgency-low"
-                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent/5 hover:border-success/50 peer-data-[state=checked]:border-success peer-data-[state=checked]:bg-success/5 cursor-pointer transition-all"
-              >
-                <Info className="w-6 h-6 text-success" />
-                <span className="font-medium">Low</span>
-                <span className="text-xs text-muted-foreground text-center">When possible</span>
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
 
         <div className="space-y-2">
           <Label>Attachments (Optional)</Label>
