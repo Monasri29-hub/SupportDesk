@@ -12,7 +12,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   role: UserRole;
-  login: (role: UserRole) => void;
+  login: (email: string, role: UserRole) => boolean;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -37,10 +37,29 @@ const mockUsers: Record<Exclude<UserRole, null>, User> = {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = (role: UserRole) => {
+  const login = (email: string, role: UserRole) => {
+    // In a real app, we would validate password here
+    // For now, we justify trust based on the simulated role selection
     if (role) {
-      setUser(mockUsers[role]);
+      // Dynamic user generation
+      const name = email.split('@')[0].split('.')[0]; // Simple name extraction
+      const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+
+      // Generate a deterministic ID based on email for persistence
+      // Simple hash-like approach for demo purposes
+      const uniqueSuffix = email.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0).toString(16).toUpperCase();
+
+      const newUser: User = {
+        id: role === 'customer' ? `CUST-${uniqueSuffix}` : `AGENT-${uniqueSuffix}`,
+        name: capitalizedName,
+        email: email,
+        role: role
+      };
+
+      setUser(newUser);
+      return true;
     }
+    return false;
   };
 
   const logout = () => {

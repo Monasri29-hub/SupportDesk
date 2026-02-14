@@ -12,12 +12,21 @@ interface TicketContextType {
 const TicketContext = createContext<TicketContextType | undefined>(undefined);
 
 export function TicketProvider({ children }: { children: ReactNode }) {
-  const [tickets, setTickets] = useState<Ticket[]>(mockTickets);
+  // Load initial tickets from localStorage or fall back to mock data
+  const [tickets, setTickets] = useState<Ticket[]>(() => {
+    const savedTickets = localStorage.getItem('tickets');
+    return savedTickets ? JSON.parse(savedTickets) : mockTickets;
+  });
+
+  // Save tickets to localStorage whenever they change
+  React.useEffect(() => {
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+  }, [tickets]);
 
   const addTicket = (ticketData: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'responses' | 'timeline' | 'assignedTeam'>): Ticket => {
     const now = new Date();
     const id = `TKT-${Math.floor(100000 + Math.random() * 900000)}`;
-    
+
     const newTicket: Ticket = {
       ...ticketData,
       id,

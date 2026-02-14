@@ -4,19 +4,24 @@ import { useTickets } from '@/contexts/TicketContext';
 import { StatCard } from '@/components/ui/stat-card';
 import { TicketTable } from '@/components/TicketTable';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Ticket, Clock, CheckCircle, ArrowRight } from 'lucide-react';
+import { PlusCircle, Ticket, Clock, CheckCircle, ArrowRight, LogOut } from 'lucide-react';
 
 export default function CustomerDashboard() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { tickets } = useTickets();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const customerTickets = tickets.filter(t => t.customerId === user?.id);
   const totalTickets = customerTickets.length;
-  const openTickets = customerTickets.filter(t => 
+  const openTickets = customerTickets.filter(t =>
     t.status === 'New' || t.status === 'In Progress' || t.status === 'Pending'
   ).length;
-  const resolvedTickets = customerTickets.filter(t => 
+  const resolvedTickets = customerTickets.filter(t =>
     t.status === 'Resolved' || t.status === 'Closed'
   ).length;
 
@@ -30,13 +35,23 @@ export default function CustomerDashboard() {
           <h1 className="text-3xl font-bold">Welcome back, {user?.name?.split(' ')[0]}</h1>
           <p className="text-muted-foreground mt-1">Here's an overview of your support tickets</p>
         </div>
-        <Button 
-          onClick={() => navigate('/customer/create')}
-          className="btn-hero"
-        >
-          <PlusCircle className="w-5 h-5 mr-2" />
-          Create New Ticket
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
+          <Button
+            onClick={() => navigate('/customer/create')}
+            className="btn-hero"
+          >
+            <PlusCircle className="w-5 h-5 mr-2" />
+            Create New Ticket
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -66,7 +81,7 @@ export default function CustomerDashboard() {
 
       {/* Quick Actions */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div 
+        <div
           onClick={() => navigate('/customer/create')}
           className="card-elevated p-6 cursor-pointer hover:shadow-lg transition-all group"
         >
@@ -82,7 +97,7 @@ export default function CustomerDashboard() {
           </div>
         </div>
 
-        <div 
+        <div
           onClick={() => navigate('/customer/tickets')}
           className="card-elevated p-6 cursor-pointer hover:shadow-lg transition-all group"
         >

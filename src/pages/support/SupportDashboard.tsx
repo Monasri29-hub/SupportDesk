@@ -2,16 +2,18 @@ import { useTickets } from '@/contexts/TicketContext';
 import { getTicketStats } from '@/lib/mockData';
 import { StatCard } from '@/components/ui/stat-card';
 import { TicketTable } from '@/components/TicketTable';
-import { 
-  Ticket, 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Ticket,
+  Clock,
+  AlertTriangle,
+  CheckCircle,
   TrendingUp,
   ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { LogOut } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const STATUS_COLORS = {
@@ -32,8 +34,14 @@ const CATEGORY_COLORS = {
 
 export default function SupportDashboard() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const { tickets } = useTickets();
   const stats = getTicketStats(tickets);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const statusData = Object.entries(stats.byStatus).map(([name, value]) => ({
     name,
@@ -51,9 +59,19 @@ export default function SupportDashboard() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Support Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Overview of all support tickets and team performance</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Support Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Overview of all support tickets and team performance</p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={handleLogout}
+          className="gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </Button>
       </div>
 
       {/* Stats */}
@@ -108,9 +126,9 @@ export default function SupportDashboard() {
                   labelLine={false}
                 >
                   {statusData.map((entry) => (
-                    <Cell 
-                      key={entry.name} 
-                      fill={STATUS_COLORS[entry.name as keyof typeof STATUS_COLORS]} 
+                    <Cell
+                      key={entry.name}
+                      fill={STATUS_COLORS[entry.name as keyof typeof STATUS_COLORS]}
                     />
                   ))}
                 </Pie>
@@ -129,14 +147,14 @@ export default function SupportDashboard() {
               <BarChart data={categoryData} layout="vertical">
                 <XAxis type="number" />
                 <YAxis type="category" dataKey="name" width={100} />
-                <Tooltip 
+                <Tooltip
                   formatter={(value, name, props) => [value, props.payload.fullName]}
                 />
                 <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                   {categoryData.map((entry) => (
-                    <Cell 
-                      key={entry.fullName} 
-                      fill={CATEGORY_COLORS[entry.fullName as keyof typeof CATEGORY_COLORS]} 
+                    <Cell
+                      key={entry.fullName}
+                      fill={CATEGORY_COLORS[entry.fullName as keyof typeof CATEGORY_COLORS]}
                     />
                   ))}
                 </Bar>
